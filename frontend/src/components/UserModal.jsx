@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { X, UserRound, Mail, Phone, CalendarDays, Pencil, Trash2 } from 'lucide-react';
 
-const EMPTY_FORM = { name: '', phone: '', email: '' };
+const EMPTY_FORM = { firstname: '', lastname: '', phone: '', email: '' };
 
 export default function UserModal({ user, mode, busy, onClose, onSave, onEdit, onDelete }) {
   const isForm = mode === 'create' || mode === 'edit';
@@ -9,10 +9,10 @@ export default function UserModal({ user, mode, busy, onClose, onSave, onEdit, o
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    setForm(user ? { name: user.name, phone: user.phone, email: user.email } : EMPTY_FORM);
+    setForm(user ? { firstname: user.firstname || '', lastname: user.lastname || '', phone: user.phone || '', email: user.email || '' } : EMPTY_FORM);
     setErrors({});
   }, [user, mode]);
-
+   
   function change(event) {
     setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
     setErrors((current) => ({ ...current, [event.target.name]: '' }));
@@ -21,7 +21,8 @@ export default function UserModal({ user, mode, busy, onClose, onSave, onEdit, o
   async function submit(event) {
     event.preventDefault();
     const nextErrors = {};
-    if (!form.name.trim()) nextErrors.name = 'Please enter a name.';
+    if (!form.firstname.trim()) nextErrors.firstname = 'Please enter a first name.';
+    if (!form.lastname.trim()) nextErrors.lastname = 'Please enter a last name.';
     if (!form.phone.trim()) nextErrors.phone = 'Please enter a phone number.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
       nextErrors.email = 'Please enter a valid email.';
@@ -29,7 +30,8 @@ export default function UserModal({ user, mode, busy, onClose, onSave, onEdit, o
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length) return;
     await onSave({
-      name: form.name.trim(),
+      firstname: form.firstname.trim(),
+      lastname: form.lastname.trim(),
       phone: form.phone.trim(),
       email: form.email.trim().toLowerCase()
     });
@@ -55,9 +57,14 @@ export default function UserModal({ user, mode, busy, onClose, onSave, onEdit, o
         {isForm ? (
           <form onSubmit={submit} className="user-form">
             <label>
-              Full name
-              <span className="input-wrap"><UserRound size={17} /><input name="name" value={form.name} onChange={change} maxLength={100} placeholder="e.g. Anan Srisuk" autoFocus /></span>
-              {errors.name && <small className="field-error">{errors.name}</small>}
+              First name
+              <span className="input-wrap"><UserRound size={17} /><input name="firstname" value={form.firstname} onChange={change} maxLength={100} placeholder="e.g. Anan" autoFocus /></span>
+              {errors.firstname && <small className="field-error">{errors.firstname}</small>}
+            </label>
+            <label>
+              Last name
+              <span className="input-wrap"><UserRound size={17} /><input name="lastname" value={form.lastname} onChange={change} maxLength={100} placeholder="e.g. Srisuk" /></span>
+              {errors.lastname && <small className="field-error">{errors.lastname}</small>}
             </label>
             <label>
               Phone number
@@ -77,8 +84,8 @@ export default function UserModal({ user, mode, busy, onClose, onSave, onEdit, o
         ) : (
           <>
             <div className="profile-block">
-              <div className="avatar avatar-large">{user?.name?.charAt(0)?.toUpperCase() || 'U'}</div>
-              <div><h3>{user?.name}</h3><p className="muted">User #{user?.id}</p></div>
+              <div className="avatar avatar-large">{user?.firstname?.charAt(0)?.toUpperCase() || 'U'}</div>
+              <div><h3>{user?.firstname} {user?.lastname}</h3><p className="muted">User #{user?.id}</p></div>
             </div>
             <div className="detail-list">
               <div><span><Mail size={17} /> Email</span><strong>{user?.email}</strong></div>

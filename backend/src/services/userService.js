@@ -6,9 +6,9 @@ export async function getAllUsers(search = '') {
   const term = `%${search.trim()}%`;
   const [rows] = await pool.execute(
     `SELECT ${USER_FIELDS} FROM users
-     WHERE name LIKE ? OR email LIKE ? OR phone LIKE ?
+     WHERE firstname LIKE ? OR lastname LIKE ? OR email LIKE ? OR phone LIKE ?
      ORDER BY id DESC`,
-    [term, term, term]
+    [term, term, term, term]
   );
   return rows;
 }
@@ -21,18 +21,18 @@ export async function getUserById(id) {
   return rows[0] || null;
 }
 
-export async function createUser({ name, phone, email }) {
+export async function createUser({ firstname, lastname, phone, email }) {
   const [result] = await pool.execute(
-    'INSERT INTO users (name, phone, email) VALUES (?, ?, ?)',
-    [name, phone, email]
+    'INSERT INTO users (firstname, lastname, phone, email) VALUES (?, ?, ?, ?)',
+    [firstname, lastname, phone, email]
   );
   return getUserById(result.insertId);
 }
 
-export async function updateUser(id, { name, phone, email }) {
+export async function updateUser(id, { firstname, lastname, phone, email }) {
   const [result] = await pool.execute(
-    'UPDATE users SET name = ?, phone = ?, email = ? WHERE id = ?',
-    [name, phone, email, id]
+    'UPDATE users SET firstname = ?, lastname = ?, phone = ?, email = ? WHERE id = ?',
+    [firstname, lastname, phone, email, id]
   );
 
   if (result.affectedRows === 0) return null;

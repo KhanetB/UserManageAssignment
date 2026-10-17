@@ -73,7 +73,7 @@ export default function App() {
   }
 
   async function deleteUser(user) {
-    if (!window.confirm(`Delete ${user.name}? This action cannot be undone.`)) return;
+    if (!window.confirm(`Delete ${fullName(user)}? This action cannot be undone.`)) return;
     setBusy(true);
     setError('');
     try {
@@ -93,12 +93,16 @@ export default function App() {
     setModal({ mode, user });
   }
 
+  function fullName(user) {
+  return `${user.firstname || ''} ${user.lastname || ''}`.trim() || 'Unnamed user';
+  }
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
         <a className="brand" href="#" aria-label="User Management home">
           <span className="brand-mark"><Users size={22} /></span>
-          <span>People<span className="brand-light">Desk</span></span>
+          <span>User<span className="brand-light">Management</span></span>
         </a>
         <p className="nav-label">WORKSPACE</p>
         <div className="nav-item nav-item-active"><Users size={18} /> User management</div>
@@ -146,11 +150,11 @@ export default function App() {
                     visibleUsers.length === 0 ? <tr><td colSpan="5" className="empty-state">{error ? 'Could not load records.' : 'No users found. Try another search or add a user.'}</td></tr> :
                     visibleUsers.map((user, index) => (
                       <tr key={user.id}>
-                        <td><button className="user-cell" onClick={() => openModal('detail', user)}><span className={`avatar avatar-${index % 5}`}>{initials(user.name)}</span><span className="user-name-wrap"><strong>{user.name}</strong><small>Registered user</small></span></button></td>
+                        <td><button className="user-cell" onClick={() => openModal('detail', user)}><span className={`avatar avatar-${index % 5}`}>{initials(fullName(user))}</span><span className="user-name-wrap"><strong>{fullName(user)}</strong><small>Registered user</small></span></button></td>
                         <td><span className="contact-cell"><Phone size={14} />{user.phone}</span></td>
                         <td><span className="contact-cell"><Mail size={14} />{user.email}</span></td>
                         <td><span className="id-badge">USR-{String(user.id).padStart(4, '0')}</span></td>
-                        <td><div className="row-actions"><button title="View details" aria-label={`View ${user.name}`} onClick={() => openModal('detail', user)}><Eye size={16} /></button><button title="Edit user" aria-label={`Edit ${user.name}`} onClick={() => openModal('edit', user)}><Pencil size={16} /></button><button title="Delete user" aria-label={`Delete ${user.name}`} onClick={() => deleteUser(user)}><Trash2 size={16} /></button><button title="More details" aria-label={`More actions for ${user.name}`} onClick={() => openModal('detail', user)}><MoreHorizontal size={16} /></button></div></td>
+                        <td><div className="row-actions"><button title="View details" aria-label={`View ${fullName(user)}`} onClick={() => openModal('detail', user)}><Eye size={16} /></button><button title="Edit user" aria-label={`Edit ${fullName(user)}`} onClick={() => openModal('edit', user)}><Pencil size={16} /></button><button title="Delete user" aria-label={`Delete ${fullName(user)}`} onClick={() => deleteUser(user)}><Trash2 size={16} /></button><button title="More details" aria-label={`More actions for ${fullName(user)}`} onClick={() => openModal('detail', user)}><MoreHorizontal size={16} /></button></div></td>
                       </tr>
                     ))
                   }
