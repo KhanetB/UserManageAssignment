@@ -1,6 +1,6 @@
 import { pool } from '../config/database.js';
 
-const USER_FIELDS = 'id, name, phone, email, created_at, updated_at';
+const USER_FIELDS = 'id, firstname, lastname, phone, email, created_at, updated_at';
 
 export async function getAllUsers(search = '') {
   const term = `%${search.trim()}%`;
